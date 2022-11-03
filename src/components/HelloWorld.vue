@@ -2,14 +2,13 @@
   <div className="helloWorld">
     <h1>Hello World for Vue 3 <img class="applogo" alt="Vue logo" src="../assets/logo.png" /></h1>
     <div class="btn-group">
-      <button :style="{ marginRight: '10px', backgroundColor: bShowScanner ? 'rgb(255,174,55)' : 'white' }"
-        @click="showScanner">Video Decode</button>
-      <button :style="{ backgroundColor: bShowImgDecode ? 'rgb(255,174,55)' : 'white' }" @click="showImgDecode">Image
-        Decode</button>
+      <!-- <button :style="{ marginRight: '10px', backgroundColor: bShowScanner ? 'rgb(255,174,55)' : 'white' }"
+        @click="showScanner">Video Decode</button> -->
+      <!-- <button :style="{ backgroundColor: bShowImgDecode ? 'rgb(255,174,55)' : 'white' }" @click="showImgDecode">Image
+        Decode</button> -->
     </div>
     <div class="container">
       <VideoDecode v-if="bShowScanner"></VideoDecode>
-      <ImgDecode v-if="bShowImgDecode"></ImgDecode>
     </div>
   </div>
 </template>
@@ -18,7 +17,6 @@
 import "../dbr"; // import side effects. The license, engineResourcePath, so on.
 import { BarcodeScanner } from 'dynamsoft-javascript-barcode'
 import VideoDecode from "./VideoDecode";
-import ImgDecode from './ImgDecode'
 import { ref, onMounted } from "vue";
 
 export default {
@@ -57,7 +55,7 @@ export default {
     };
   },
   components: {
-    VideoDecode, ImgDecode
+    VideoDecode
   },
 };
 </script>
