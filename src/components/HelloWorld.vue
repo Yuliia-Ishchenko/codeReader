@@ -1,65 +1,99 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa" target="_blank" rel="noopener">pwa</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router" target="_blank" rel="noopener">router</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-typescript" target="_blank" rel="noopener">typescript</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div className="helloWorld">
+    <h1>Hello World for Vue 3 <img class="applogo" alt="Vue logo" src="../assets/logo.png" /></h1>
+    <div class="btn-group">
+      <button :style="{ marginRight: '10px', backgroundColor: bShowScanner ? 'rgb(255,174,55)' : 'white' }"
+        @click="showScanner">Video Decode</button>
+      <button :style="{ backgroundColor: bShowImgDecode ? 'rgb(255,174,55)' : 'white' }" @click="showImgDecode">Image
+        Decode</button>
+    </div>
+    <div class="container">
+      <VideoDecode v-if="bShowScanner"></VideoDecode>
+      <ImgDecode v-if="bShowImgDecode"></ImgDecode>
+    </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+<script>
+import "../dbr"; // import side effects. The license, engineResourcePath, so on.
+import { BarcodeScanner } from 'dynamsoft-javascript-barcode'
+import VideoDecode from "./VideoDecode";
+import ImgDecode from './ImgDecode'
+import { ref, onMounted } from "vue";
 
-@Options({
-  props: {
-    msg: String
-  }
-})
-export default class HelloWorld extends Vue {
-  msg!: string
-}
+export default {
+  name: "HelloWorld",
+  setup() {
+    const bShowScanner = ref(true);
+    const bShowImgDecode = ref(false)
+    onMounted(async () => {
+      try {
+        //Load the library on page load to speed things up.
+        await BarcodeScanner.loadWasm();
+      } catch (ex) {
+        let errMsg;
+        if (ex.message.includes("network connection error")) {
+          errMsg = "Failed to connect to Dynamsoft License Server: network connection error. Check your Internet connection or contact Dynamsoft Support (support@dynamsoft.com) to acquire an offline license.";
+        } else {
+          errMsg = ex.message||ex;
+        }
+        console.error(errMsg);
+        alert(errMsg);
+      }
+    });
+    const showScanner = () => {
+      bShowScanner.value = true;
+      bShowImgDecode.value = false;
+    };
+    const showImgDecode = () => {
+      bShowScanner.value = false;
+      bShowImgDecode.value = true;
+    }
+    return {
+      bShowScanner,
+      showScanner,
+      showImgDecode,
+      bShowImgDecode
+    };
+  },
+  components: {
+    VideoDecode, ImgDecode
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
+<style scoped>
+button {
+  font-size: 1.5rem;
+  margin-bottom: 2vh;
+  border: 1px solid black;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+.container {
+  margin: 2vmin auto;
+  text-align: center;
+  font-size: medium;
+  /* height: 40vh; */
+  width: 80vw;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+
+.applogo {
+  height: 25px;
 }
-a {
-  color: #42b983;
+
+.helloWorld {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  color: #455a64;
+}
+
+h1 {
+  font-size: 1.5em;
 }
 </style>

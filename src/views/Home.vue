@@ -1,9 +1,9 @@
 <template>
-  <div class="home">
+  <HelloWorld />
+  <!-- <div class="home">
     <h1>Result deCode: {{testReaderCode}}</h1>
     <StreamBarcodeReader @decode="onDecode" @loaded="onLoaded"></StreamBarcodeReader>
-    <!-- <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/> -->
-  </div>
+  </div> -->
 </template>
 
 <script setup>
